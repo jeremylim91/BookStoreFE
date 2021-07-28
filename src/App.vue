@@ -1,28 +1,89 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app id="inspire">
+    <v-app-bar prominent flat dense app v-if="$vuetify.breakpoint.smAndDown">
+      <v-app-bar-nav-icon
+        v-model="drawer"
+        @click="drawer = true"
+        v-click-outside="() => (drawer = null)"
+      ></v-app-bar-nav-icon>
+      <v-toolbar-title>Bookstore</v-toolbar-title>
+    </v-app-bar>
+    <!-- <v-app-bar-nav-icon
+      app
+      v-if="$vuetify.breakpoint.smAndDown"
+      v-model="drawer"
+      @click="drawer = true"
+      v-click-outside="() => (drawer = !drawer)"
+    ></v-app-bar-nav-icon> -->
+    <v-navigation-drawer
+      app
+      :value="toggleValue($vuetify.breakpoint.smAndDown)"
+      dark
+      :expand-on-hover="!$vuetify.breakpoint.smAndDown"
+      style="background-color: #374A67"
+    >
+      <v-list>
+        <v-list-item class="px-2">
+          <v-list-item-avatar>
+            <v-img
+              src="https://randomuser.me/api/portraits/women/85.jpg"
+            ></v-img>
+          </v-list-item-avatar>
+        </v-list-item>
+
+        <v-list-item link>
+          <v-list-item-content>
+            <v-list-item-title class="text-h6">
+              Sandra Adams
+            </v-list-item-title>
+            <v-list-item-subtitle>sandra_a88@gmail.com</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+
+      <v-divider></v-divider>
+
+      <v-list nav dense>
+        <v-list-item v-for="item in items" :key="item.title" :to="item.to" link>
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title> {{ item.title }} </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-main>
+      <router-view />
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  data: () => ({
+    drawer: null,
+    items: [
+      { title: 'Search', icon: 'mdi-magnify', to: '/search' },
+      { title: 'All Books', icon: 'mdi-book-open-variant', to: '/allBooks' },
+      { title: 'About', icon: 'mdi-help-box', to: '/about' },
+    ],
+    right: null,
+  }),
+  methods: {
+    toggleValue(isSmAndDown) {
+      console.log(`isSmAndDown:`);
+      console.log(isSmAndDown);
+      if (isSmAndDown && this.drawer === false) {
+        this.drawer = null;
+      }
+      if (isSmAndDown && this.drawer !== false) {
+        return this.drawer;
+      }
+      return true;
+    },
+  },
+};
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
