@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import allBooksIndex from '../components/AllBooks/AllBooks-index'
+import allBooksIndex from '../components/AllBooks/AllBooksIndex'
+import searchIndex from "../components/Search/SearchIndex" 
 
 Vue.use(VueRouter)
 
@@ -27,6 +28,15 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     // component: () => import('../components/AllBooks/allBooks-index.vue')
     component: allBooksIndex
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    // component: () => import('../components/AllBooks/allBooks-index.vue')
+    component: searchIndex
   }
 ]
 
