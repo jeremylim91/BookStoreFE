@@ -24,7 +24,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
 .page-header{
 background-color: #808ea3;
