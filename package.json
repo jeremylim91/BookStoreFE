@@ -36,14 +36,15 @@
       "node": true
     },
     "extends": [
-      "plugin:vue/essential",
+      "plugin:vue/recommended",
       "eslint:recommended"
     ],
     "parserOptions": {
       "parser": "babel-eslint"
     },
     "rules": {
-      "vue/no-unused-vars": "warn"
+      "vue/no-unused-vars": "warn",
+      "vue/valid-v-slot": "off"
     }
   },
   "browserslist": [
