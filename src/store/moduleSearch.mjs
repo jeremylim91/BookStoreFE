@@ -17,11 +17,12 @@ export default {
     }
   },
   actions: {
-    getSearchResults({ state, commit, rootState }, payload){
+    getSearchResults({ state, commit, rootState },  payload){
       console.log("payload is:")
       console.log(payload)
+
       // query the BE for the data
-      axios.get("/books/findByTitle")
+      axios.get(`/books/findByText?text=${payload}`)
       .then(({data})=>{
         console.log("search results from BE is:")
         console.log(data)
@@ -37,7 +38,9 @@ export default {
   },
   getters: {
     getSearchResults(state, getters, rootState){
-      return state.getSearchResults;
+      console.log("inside getter")
+      console.log(state.searchResults)
+      return state.searchResults;
     }
   }
 }
