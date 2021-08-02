@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container>
-      <v-form v-model="valid" class="form" @submit.prevent="getSearchResults">
+      <v-form v-model="valid" class="form" @submit.prevent="handleSearch">
         <v-row>
           <v-col cols="8" offset="1">
             <v-text-field
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions } from "vuex";
 import { GET_SEARCH_RESULTS } from "../../store/moduleSearch";
 export default {
   data: () => ({
@@ -33,10 +33,13 @@ export default {
   }),
   methods: {
     ...mapActions("moduleSearch", [GET_SEARCH_RESULTS]),
+    handleSearch() {
+      this.getSearchResults(this.searchString);
+    },
   },
-  computed: {
-    ...mapGetters("moduleSearch", { searchResults: GET_SEARCH_RESULTS }),
-  },
+  // computed: {
+  //   ...mapGetters("moduleSearch", { searchResults: GET_SEARCH_RESULTS }),
+  // },
 };
 </script>
 
