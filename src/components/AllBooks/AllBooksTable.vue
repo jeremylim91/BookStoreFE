@@ -16,30 +16,35 @@
         <v-img :src="item.thumbnailUrl"> </v-img>
       </div>
     </template>
+    <template v-slot:item.actions="{ item }">
+      <!-- if the thumnail field is empty, show NA -->
+      <div class="actions-container">
+        <edit-btn :openDialog="openDialog"></edit-btn>
+        <v-btn class="ma-auto" block color="error" plain>
+          Delete
+        </v-btn>
+      </div>
+    </template>
   </v-data-table>
 </template>
 
 <script>
-// let index=0
-
+import EditBtn from "../HOCs/EditBtn.vue";
 import { mapGetters, mapActions } from "vuex";
 export default {
+  props: ["openDialog"],
+  components: { EditBtn },
   data() {
     return {
       index: 0,
       headers: [
-        // {
-        //   text: 'Index',
-        //   value: "index",
-        //   align: 'start',
-        //   sortable: false,
-        // },
         { text: "Title", value: "title" },
         { text: "Price (SGD)", value: "price" },
         { text: "Page count", value: "pageCount" },
         { text: "Thumbnail", value: "thumbnailUrl" },
         { text: "Authors", value: "authors" },
         { text: "Description", value: "shortDescription" },
+        { text: "Actions", value: "actions" },
       ],
     };
   },
@@ -59,4 +64,8 @@ export default {
   },
 };
 </script>
-<style></style>
+<style>
+v-btn {
+  padding: 5px 5px 5px;
+}
+</style>
