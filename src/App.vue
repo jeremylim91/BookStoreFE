@@ -66,9 +66,10 @@ export default {
   data: () => ({
     drawer: null,
     items: [
-      { title: 'Search', icon: 'mdi-magnify', to: '/search' },
-      { title: 'All Books', icon: 'mdi-book-open-variant', to: '/allBooks' },
-      { title: 'About', icon: 'mdi-help-box', to: '/about' },
+      { title: "Search", icon: "mdi-magnify", to: "/search" },
+      { title: "All Books", icon: "mdi-book-open-variant", to: "/allBooks" },
+      { title: "About", icon: "mdi-help-box", to: "/about" },
+      { title: "Create Book", icon: "mdi-plus-thick", to: "/createBooks" },
     ],
     right: null,
   }),
