@@ -25,9 +25,9 @@ export default {
       state.newBook = data;
     },
     toggleIsBookAdded(state, data) {
-      setTimeout(() => {
-        state.isBookAdded = false;
-      }, 2000);
+      // setTimeout(() => {
+      //   state.isBookAdded = false;
+      // }, 6000);
       state.isBookAdded = !state.isBookAdded;
     },
   },
