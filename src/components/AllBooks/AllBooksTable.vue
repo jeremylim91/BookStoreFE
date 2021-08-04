@@ -13,13 +13,26 @@
       </div>
       <!-- Else the thumbbnail is not empty, display it -->
       <div v-else>
-        <v-img :src="item.thumbnailUrl"> </v-img>
+        <v-img :src="item.thumbnailUrl" />
       </div>
     </template>
     <template v-slot:item.actions="{ item }">
       <!-- if the thumnail field is empty, show NA -->
       <div class="actions-container">
-        <edit-btn :openDialog="openDialog"></edit-btn>
+        <!-- <EditBtn :handle-btn-click="handleBtnClick($event, item)" /> -->
+        <v-btn
+          class="mx-auto my-3"
+          block
+          color="primary"
+          elevation="3"
+          dark
+          @click="handleBtnClick($event, item)"
+        >
+          <v-icon left>
+            mdi-pencil
+          </v-icon>
+          Edit
+        </v-btn>
         <v-btn class="ma-auto" block color="error" plain>
           Delete
         </v-btn>
@@ -29,37 +42,41 @@
 </template>
 
 <script>
-import EditBtn from "../HOCs/EditBtn.vue";
-import { mapGetters, mapActions } from "vuex";
+// import EditBtn from '../HOCs/EditBtn.vue';
+import { mapGetters, mapActions } from 'vuex';
 export default {
-  props: ["openDialog"],
-  components: { EditBtn },
+  // components: { EditBtn },
+  props: ['openDialog', 'updateSelectedBook'],
   data() {
     return {
       index: 0,
       headers: [
-        { text: "Title", value: "title" },
-        { text: "Price (SGD)", value: "price" },
-        { text: "Page count", value: "pageCount" },
-        { text: "Thumbnail", value: "thumbnailUrl" },
-        { text: "Authors", value: "authors" },
-        { text: "Description", value: "shortDescription" },
-        { text: "Actions", value: "actions" },
+        { text: 'Title', value: 'title' },
+        { text: 'Price (SGD)', value: 'price' },
+        { text: 'Page count', value: 'pageCount' },
+        { text: 'Thumbnail', value: 'thumbnailUrl' },
+        { text: 'Authors', value: 'authors' },
+        { text: 'Description', value: 'shortDescription' },
+        { text: 'Actions', value: 'actions' },
       ],
     };
   },
   methods: {
-    ...mapActions("moduleAllBooks", ["getAllBooksData"]),
+    ...mapActions('moduleAllBooks', ['getAllBooksData']),
     urlIsInvalid(item) {
-      return item.thumbnailUrl == "" || item.thumbnailUrl == null;
+      return item.thumbnailUrl == '' || item.thumbnailUrl == null;
+    },
+    handleBtnClick(event, item) {
+      this.openDialog();
+      this.updateSelectedBook(item);
     },
   },
   mounted() {
     this.getAllBooksData();
   },
   computed: {
-    ...mapGetters("moduleAllBooks", {
-      allBooks: "getAllBooksData",
+    ...mapGetters('moduleAllBooks', {
+      allBooks: 'getAllBooksData',
     }),
   },
 };
