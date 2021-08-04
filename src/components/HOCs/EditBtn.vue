@@ -5,7 +5,7 @@
     color="primary"
     elevation="3"
     dark
-    @click="openDialog"
+    @click="handleBtnClick"
   >
     <v-icon left>
       mdi-pencil
@@ -16,7 +16,13 @@
 
 <script>
 export default {
-  props: ["openDialog"],
+  props: ['handleBtnClick'],
+  // methods: {
+  //   handleBtnClick() {
+  //     this.openDialog();
+  //     this.updateSelectedBook();
+  //   },
+  // },
 };
 </script>
 
