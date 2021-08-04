@@ -9,133 +9,155 @@
       </template>
     </PageHeader>
 
-    <template v-if="showForm">
-      <v-card outlined elevation="6" class="book-details">
-        <v-stepper v-model="e1">
-          <v-stepper-header>
-            <v-stepper-step :complete="e1 > 1" :step="1" editable>
-              Input details
-            </v-stepper-step>
-            <v-divider></v-divider>
-            <v-stepper-step :complete="e1 > 2" :step="2" :editable="valid">
-              Preview
-            </v-stepper-step>
-          </v-stepper-header>
+    <v-card outlined elevation="6" class="book-details">
+      <v-stepper v-model="e1">
+        <v-stepper-header>
+          <v-stepper-step :complete="e1 > 1" :step="1" editable>
+            Input details
+          </v-stepper-step>
+          <v-divider />
+          <v-stepper-step :complete="e1 > 2" :step="2" :editable="valid">
+            Preview
+          </v-stepper-step>
+        </v-stepper-header>
 
-          <v-stepper-items>
-            <v-stepper-content :step="1">
-              <v-card class="mb-12">
-                <v-form ref="form" v-model="valid" class="form">
-                  <v-card-title>
-                    Create a new book entry
-                  </v-card-title>
-                  <v-card-text>
-                    <v-text-field
-                      v-model="title"
-                      :rules="textRules"
-                      counter="25"
-                      hint="This field uses counter prop"
-                      label="Book title"
-                    ></v-text-field>
-                    <v-text-field
-                      v-model="thumbnailUrl"
-                      hint="Please enter a valid URL"
-                      label="URL to book image"
-                    ></v-text-field>
+        <v-stepper-items>
+          <v-stepper-content :step="1">
+            <v-card class="mb-12">
+              <v-form ref="form" v-model="valid" class="form">
+                <v-card-title>
+                  Create a new book entry
+                </v-card-title>
+                <v-card-text>
+                  <v-text-field
+                    v-model="title"
+                    :rules="textRules"
+                    counter="50"
+                    label="Book title"
+                  />
+                  <v-text-field
+                    v-model="thumbnailUrl"
+                    hint="Please enter a valid URL"
+                    label="URL to book image"
+                  />
 
-                    <v-text-field
-                      v-model="authors"
-                      :rules="textRules"
-                      counter="25"
-                      hint="This field uses counter prop"
-                      label="Authors"
-                    ></v-text-field>
-                    <v-text-field
-                      v-model="price"
-                      :rules="numRules"
-                      counter="25"
-                      hint="Please enter a valid integer"
-                      label="Price (SGD)"
-                    ></v-text-field>
-                    <v-text-field
-                      v-model="shortDescription"
-                      :rules="textRules"
-                      counter="25"
-                      hint="This field uses counter prop"
-                      label="Description"
-                    ></v-text-field>
-                  </v-card-text>
-                </v-form>
-                <!-- <v-card-actions>
-                  <v-spacer></v-spacer> -->
-                <!-- Handle cancellation -->
-                <!-- <v-btn color="green darken-1" plain @click="reset"
-                  >Cancel</v-btn
-                > -->
-                <!-- Trigger the preview to display -->
-                <!-- <v-btn
-                    color="green darken-1"
-                    :disabled="!valid"
-                    @click="validate"
-                    plain
-                    >Preview</v-btn
-                  >
-                </v-card-actions> -->
-              </v-card>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn text color="green darken-2">
-                  Cancel
+                  <v-text-field
+                    v-model="authors"
+                    :rules="textRules"
+                    counter="50"
+                    label="Authors"
+                  />
+                  <v-text-field
+                    v-model="price"
+                    :rules="numRules"
+                    counter="25"
+                    hint="Please enter a valid integer"
+                    label="Price (SGD)"
+                  />
+                  <v-text-field
+                    v-model="shortDescription"
+                    :rules="descriptionRules"
+                    counter="500"
+                    label="Description"
+                  />
+                </v-card-text>
+              </v-form>
+            </v-card>
+            <v-card-actions>
+              <v-spacer />
+              <v-btn text color="green darken-2">
+                Cancel
+              </v-btn>
+              <v-btn
+                color="green darken-2"
+                :disabled="!valid"
+                text
+                @click="
+                  () => {
+                    e1 = 2;
+                    validate();
+                  }
+                "
+              >
+                Continue
+              </v-btn>
+            </v-card-actions>
+          </v-stepper-content>
+          <v-stepper-content :step="2">
+            <Card class="preview-card my-5">
+              <template v-slot:image>
+                <v-img
+                  v-if="thumbnailUrl"
+                  :aspect-ratio="16 / 9"
+                  contain
+                  :src="thumbnailUrl"
+                  class="imageClass"
+                />
+                <v-img
+                  v-else
+                  contain
+                  src="https://www.metisgl.com/assets/camaleon_cms/image-not-found-4a963b95bf081c3ea02923dceaeb3f8085e1a654fc54840aac61a57a60903fef.png"
+                  class="imageClass"
+                />
+              </template>
+              <template v-slot:title>
+                {{ title }}
+              </template>
+              <template v-slot:subheader>
+                {{ authors }}
+              </template>
+              <template v-slot:price>
+                {{ price }}
+              </template>
+              <template v-slot:description>
+                {{ shortDescription }}
+              </template>
+            </Card>
+            <!-- Create buttons for second page of form -->
+            <v-card-actions>
+              <template v-if="!isFormSubmitted">
+                <v-spacer />
+                <v-btn text color="green darken-2" @click="e1 = 1">
+                  Back
                 </v-btn>
                 <v-btn
                   color="green darken-2"
                   :disabled="!valid"
-                  @click="
-                    () => {
-                      e1 = 2;
-                      validate();
-                    }
-                  "
                   text
+                  @click="prepDataAndSubmit()"
                 >
-                  Continue
+                  Create
                 </v-btn>
-              </v-card-actions>
-            </v-stepper-content>
-            <v-stepper-content :step="2">
-              <Card>
-                <template v-slot:image>
-                  <v-img
-                    :aspect-ratio="16 / 9"
-                    contain
-                    :src="thumbnailUrl"
-                    class="imageClass"
-                  />
-                </template>
-                <template v-slot:title>
-                  {{ title }}
-                </template>
-                <template v-slot:subheader>
-                  {{ authors }}
-                </template>
-                <template v-slot:price>
-                  {{ price }}
-                </template>
-                <template v-slot:description>
-                  {{ shortDescription }}
-                </template>
-              </Card>
-            </v-stepper-content>
-          </v-stepper-items>
-        </v-stepper>
-      </v-card>
-    </template>
+                <v-spacer />
+              </template>
+              <template v-else>
+                <v-spacer />
+                <v-btn text color="green darken-2" @click="resetForm">
+                  Add another
+                </v-btn>
+                <v-spacer />
+              </template>
+            </v-card-actions>
+          </v-stepper-content>
+        </v-stepper-items>
+      </v-stepper>
+    </v-card>
+    <v-snackbar v-model="snackbar" :timeout="timeout">
+      {{ title }} was successfully added to your store
+      <template v-slot:action="{ attrs }">
+        <v-btn color="blue" text v-bind="attrs" @click="toggleSnackBar">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
 <script>
-import PageHeader from "../HOCs/PageHeader.vue";
-import Card from "../HOCs/Card.vue";
+import PageHeader from '../HOCs/PageHeader.vue';
+import Card from '../HOCs/Card.vue';
+import { mapActions, mapGetters } from 'vuex';
+
 export default {
   components: {
     PageHeader,
@@ -143,32 +165,80 @@ export default {
   },
   data() {
     return {
+      // ====Snack bar=====
+      // snackbar: false,
+      timeout: 3000,
+      // =====================
+      // ===multistep form====
       e1: 1,
       valid: false,
-      // showOverlay: false,
-      showForm: true,
-      // showPreview: false,
-      authors: "",
+      // =====================
+      // =====Form inputs=====
+      authors: '',
       price: 0,
-      shortDescription: "",
-      title: "",
-      thumbnailUrl: "",
+      shortDescription: '',
+      title: '',
+      thumbnailUrl: '',
+      // =====================
+      // ==Validation rules===
       textRules: [
-        (v) => !!v || "This is a required field",
-        (v) => v.length <= 25 || "Max 25 characters",
+        (v) => !!v || 'This is a required field',
+        (v) => v.length <= 50 || 'Max 25 characters',
       ],
-      numRules: [(v) => !isNaN(v) || "Please enter a valid integer"],
+      descriptionRules: [
+        (v) => !!v || 'This is a required field',
+        (v) => v.length <= 500 || 'Max 500 characters',
+      ],
+      numRules: [(v) => !isNaN(v) || 'Please enter a valid integer'],
       // urlRules: [(v) => this.checkUrl(v) || "URL invalid"],
+      // ======================
+      // ==Determine which button to show
+      isFormSubmitted: false,
+      // ======================
     };
   },
-  createPreview() {
-    this.showPreview = true;
+  computed: {
+    ...mapGetters('moduleCreateBook', { getIsBookAdded: 'getIsBookAdded' }),
+    snackbar() {
+      return this.getIsBookAdded;
+    },
   },
-  validate() {
-    console.log("Validating the input....");
-    console.log("this.$ref.form.valdiate() is:");
-    this.$refs.form.validate();
-    this.createPreview();
+  methods: {
+    ...mapActions('moduleCreateBook', {
+      createBook: 'createBook',
+      toggleSnackBar: 'toggleIsBookAdded',
+    }),
+
+    validate() {
+      console.log('Validating the input....');
+      this.$refs.form.validate();
+    },
+
+    prepDataAndSubmit() {
+      // Convert authors from a string to an array of strings
+      const authorsArray = this.authors.split(',');
+      console.log('authorsArray is:');
+      console.log(authorsArray);
+
+      // Switch the state to show the form has been subitted
+      this.isFormSubmitted = true;
+
+      this.createBook({
+        title: this.title,
+        thumbnailUrl: this.thumbnailUrl,
+        authors: authorsArray,
+        price: this.price,
+        shortDescription: this.shortDescription,
+      });
+    },
+    resetForm() {
+      // Reset form fields
+      this.$refs.form.reset();
+      // Update the state of the form
+      this.isFormSubmitted = false;
+      // Update which portion of the multistep form should be displayed
+      this.e1 = 1;
+    },
   },
 };
 </script>
