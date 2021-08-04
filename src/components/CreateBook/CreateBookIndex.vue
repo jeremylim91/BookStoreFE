@@ -9,7 +9,7 @@
       </template>
     </PageHeader>
 
-    <v-card outlined elevation="6" class="book-details">
+    <!-- <v-card outlined elevation="6" class="book-details">
       <v-stepper v-model="e1">
         <v-stepper-header>
           <v-stepper-step :complete="e1 > 1" :step="1" editable>
@@ -112,9 +112,9 @@
               <template v-slot:description>
                 {{ shortDescription }}
               </template>
-            </Card>
-            <!-- Create buttons for second page of form -->
-            <v-card-actions>
+            </Card> -->
+    <!-- Create buttons for second page of form -->
+    <!-- <v-card-actions>
               <template v-if="!isFormSubmitted">
                 <v-spacer />
                 <v-btn text color="green darken-2" @click="e1 = 1">
@@ -141,11 +141,64 @@
           </v-stepper-content>
         </v-stepper-items>
       </v-stepper>
-    </v-card>
+    </v-card> -->
+    <MultiStepForm
+      :is-form-submitted="isFormSubmitted"
+      :prep-data-and-submit="prepDataAndSubmit"
+      :title="title"
+      :authors="authors"
+      :price="price"
+      :short-description="shortDescription"
+      :thumbnail-url="thumbnailUrl"
+      :reset-form-fields="resetFormFields"
+    >
+      <template v-slot:title>
+        <v-text-field
+          v-model.trim="title"
+          :rules="textRules"
+          counter="50"
+          label="Book title"
+        />
+      </template>
+      <template v-slot:thumbnailUrl>
+        <v-text-field
+          v-model.trim="thumbnailUrl"
+          hint="Please enter a valid URL"
+          label="URL to book image"
+        />
+      </template>
+      <template v-slot:authors>
+        <v-text-field
+          v-model="authors"
+          :rules="textRules"
+          counter="50"
+          label="Authors"
+        />
+      </template>
+      <template v-slot:price>
+        <v-text-field
+          v-model.number="price"
+          :rules="numRules"
+          counter="25"
+          hint="Please enter a valid integer"
+          label="Price (SGD)"
+        />
+      </template>
+      <template v-slot:shortDescription>
+        <v-text-field
+          v-model.trim="shortDescription"
+          :rules="descriptionRules"
+          counter="500"
+          label="Description"
+        />
+      </template>
+    </MultiStepForm>
+    <!-- eslint-disable-next-line -->
     <v-snackbar v-model="snackbar" :timeout="timeout">
       {{ title }} was successfully added to your store
       <template v-slot:action="{ attrs }">
-        <v-btn color="blue" text v-bind="attrs" @click="toggleSnackBar">
+        <!-- eslint-disable-next-line -->
+        <v-btn color="blue" text v-bind="attrs" @click="closeSnackBar">
           Close
         </v-btn>
       </template>
@@ -155,23 +208,25 @@
 
 <script>
 import PageHeader from '../HOCs/PageHeader.vue';
-import Card from '../HOCs/Card.vue';
+// import Card from '../HOCs/Card.vue';
 import { mapActions, mapGetters } from 'vuex';
+import MultiStepForm from '../HOCs/MultiStepForm.vue';
 
 export default {
   components: {
     PageHeader,
-    Card,
+    MultiStepForm,
+    // Card,
   },
   data() {
     return {
       // ====Snack bar=====
-      // snackbar: false,
-      timeout: 3000,
+      snackbar: false,
+      timeout: 5000,
       // =====================
       // ===multistep form====
-      e1: 1,
-      valid: false,
+      // e1: 1,
+      // valid: false,
       // =====================
       // =====Form inputs=====
       authors: '',
@@ -189,7 +244,10 @@ export default {
         (v) => !!v || 'This is a required field',
         (v) => v.length <= 500 || 'Max 500 characters',
       ],
-      numRules: [(v) => !isNaN(v) || 'Please enter a valid integer'],
+      numRules: [
+        (v) => !isNaN(v) || 'Please enter a valid integer',
+        (v) => v !== '' || 'Please enter a valid integer',
+      ],
       // urlRules: [(v) => this.checkUrl(v) || "URL invalid"],
       // ======================
       // ==Determine which button to show
@@ -198,15 +256,15 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('moduleCreateBook', { getIsBookAdded: 'getIsBookAdded' }),
-    snackbar() {
-      return this.getIsBookAdded;
-    },
+    ...mapGetters('moduleCreateBook', { isBookAdded: 'getIsBookAdded' }),
+    // snackbar() {
+    //   return this.isBookAdded;
+    // },
   },
   methods: {
     ...mapActions('moduleCreateBook', {
       createBook: 'createBook',
-      toggleSnackBar: 'toggleIsBookAdded',
+      // toggleSnackBar: 'toggleIsBookAdded',
     }),
 
     validate() {
@@ -231,13 +289,23 @@ export default {
         shortDescription: this.shortDescription,
       });
     },
-    resetForm() {
-      // Reset form fields
-      this.$refs.form.reset();
-      // Update the state of the form
+    resetFormFields() {
       this.isFormSubmitted = false;
-      // Update which portion of the multistep form should be displayed
-      this.e1 = 1;
+      this.title = '';
+      this.thumbnailUrl = '';
+      this.authors = '';
+      this.price = null;
+      this.shortDescription = '';
+
+      // // Reset form fields
+      // this.$refs.form.reset();
+      // // Update the state of the form
+      // this.isFormSubmitted = false;
+      // // Update which portion of the multistep form should be displayed
+      // this.e1 = 1;
+    },
+    closeSnackBar() {
+      this.snackbar = false;
     },
   },
 };
