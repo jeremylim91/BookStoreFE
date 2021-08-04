@@ -3,3 +3,22 @@ html * {
   background: rgba(255, 0, 0, .1);
   box-shadow: 0 0 0 1px red;
 } */
+/* Hide scrollbar for Chrome, Safari and Opera */
+/* .scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+} */
+/* html {
+  overflow-y: auto !important;
+} */
+
+/*==== Remove scroll bar across entire app =====*/
+html {
+  overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+/* ==================================== */
