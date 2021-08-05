@@ -4,6 +4,7 @@ import moduleAllBooks from './moduleAllBooks.mjs';
 import moduleSearch from './moduleSearch.mjs';
 import moduleCreateBook from './moduleCreateBook.mjs';
 import moduleUpdateBook from './moduleUpdateBook.mjs';
+import moduleSnackbar from './moduleSnackbar.mjs'
 
 Vue.use(Vuex);
 
@@ -13,7 +14,9 @@ export default new Vuex.Store({
     moduleSearch,
     moduleCreateBook,
     moduleUpdateBook,
+    moduleSnackbar
   },
+ 
 
   // state: {
   // },
