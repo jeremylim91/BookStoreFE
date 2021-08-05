@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div width="100%">
     <PageHeader class="test-header">
       <template v-slot:headerContent>
         Search
@@ -9,12 +9,18 @@
       </template>
     </PageHeader>
     <SearchBar />
+    <v-divider />
     <v-container>
       <v-row>
+        <!-- :cols="book < 1 ? 12 : 3" -->
+
         <v-col
           v-for="book in searchResults"
           :key="book.id"
-          :cols="book < 1 ? 12 : 3"
+          cols="12"
+          sm="6"
+          md="4"
+          lg="3"
         >
           <Card>
             <template v-slot:image>
