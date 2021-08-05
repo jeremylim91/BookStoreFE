@@ -9,7 +9,8 @@
       >
         <v-row>
           <!-- eslint-disable-next-line -->
-          <v-col cols="8" offset="1">
+
+          <v-col cols="12" md="10">
             <v-text-field
               v-model="searchString"
               :rules="nameRules"
@@ -17,7 +18,7 @@
               required
             />
           </v-col>
-          <v-col cols="2">
+          <v-col cols="12" md="2" class="search-button-col">
             <v-btn type="submit">
               Search!
             </v-btn>
@@ -46,5 +47,9 @@ export default {
 <style scoped>
 .form {
   width: 100%;
+}
+.search-button-col {
+  display: flex;
+  justify-content: center;
 }
 </style>
