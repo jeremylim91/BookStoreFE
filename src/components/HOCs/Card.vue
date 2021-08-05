@@ -36,7 +36,7 @@
       </div>
     </v-card-text>
 
-    <v-expand-transition>
+    <v-expand-transition class="transition">
       <v-card
         v-if="reveal"
         class="transition-fast-in-fast-out v-card--reveal v-card v-sheet theme--light"
@@ -90,12 +90,20 @@ span {
 .card {
   height: 100%;
 }
-
+.v-card--reveal {
+  overflow-y: auto;
+  scrollbar-color: light;
+  scrollbar-width: 2px;
+}
+/* .transition {
+  overflow-y: scroll;
+} */
 /* .image {
   background-color: aliceblue;
 } */
 
-/* .title {
-  padding-bottom: 0px;
-} */
+.title {
+  white-space: break-spaces;
+  word-break: normal !important;
+}
 </style>
