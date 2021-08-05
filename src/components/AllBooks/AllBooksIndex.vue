@@ -9,11 +9,12 @@
       </template>
     </PageHeader>
     <AllBooksTable
-      :open-dialog="openDialog"
-      :update-selected-book="updateSelectedBook"
+      :openDialog="openDialog"
+      :updateSelectedBook="updateSelectedBook"
+      :closeDialog="closeDialog"
     />
     <!-- <v-layout row justify-center> -->
-    <v-dialog v-model="showDialog" persistent max-width="70%">
+    <v-dialog v-model="showEditDialog" persistent max-width="70%">
       <template v-slot:activator="{ on }">
         <!-- <v-btn color="primary" dark v-on="on">Open Dialog</v-btn> -->
       </template>
@@ -69,7 +70,7 @@
           />
         </template>
         <template v-slot:cancelBtn>
-          <v-btn text color="green darken-2" @click="closeDialog">
+          <v-btn text color="green darken-2" @click="closeDialog('edit')">
             Close
           </v-btn>
         </template>
@@ -79,14 +80,14 @@
           </v-btn>
         </template>
         <template v-slot:completionBtn>
-          <v-btn text color="green darken-2" @click="closeDialog">
+          <v-btn text color="green darken-2" @click="closeDialog('edit')">
             Close
           </v-btn>
         </template>
       </MultiStepForm>
     </v-dialog>
-    <v-snackbar v-model="snackbar" :timeout="timeout">
-      Book has been modified
+    <v-snackbar v-model="snackbarFromStore" :timeout="timeout">
+      {{ getSnackbarContent }}
       <template v-slot:action="{ attrs }">
         <!-- eslint-disable-next-line -->
         <v-btn color="blue" text v-bind="attrs" @click="closeSnackBar">
@@ -95,17 +96,37 @@
       </template>
     </v-snackbar>
     <!-- </v-layout> -->
+
+    <v-dialog v-model="showDeleteDialog" max-width="70%">
+      <template v-slot:activator="{ on }"> </template>
+      <v-card>
+        <v-card-title>
+          <v-spacer />
+          Are you sure you want to delete '{{ title }}'?
+          <v-spacer />
+        </v-card-title>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn text color="green darken-2" @click="closeDialog('delete')">
+            Cancel
+          </v-btn>
+          <v-btn color="green darken-2" text @click="handleBookDeletion()">
+            Delete
+          </v-btn>
+          <v-spacer />
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
   <!-- <v-overlay :value="overlay"></v-overlay> -->
 </template>
 
 <script>
-import PageHeader from '../HOCs/PageHeader.vue';
-import AllBooksTable from './AllBooksTable.vue';
-import MultiStepForm from '../HOCs/MultiStepForm.vue';
-import { mapActions } from 'vuex';
+import PageHeader from "../HOCs/PageHeader.vue";
+import AllBooksTable from "./AllBooksTable.vue";
+import MultiStepForm from "../HOCs/MultiStepForm.vue";
+import { mapActions, mapGetters } from "vuex";
 
-// import { mapActions, mapGetters } from "vuex";
 // import Card from "../HOCs/Card.vue";
 export default {
   components: {
@@ -115,36 +136,61 @@ export default {
   },
   data() {
     return {
+      // ====Dialogs=====
+      showDeleteDialog: false,
+      showEditDialog: false,
+
       // ====Snack bar=====
       snackbar: false,
-      timeout: 5000,
+      // snackbarContent: "",
+      timeout: 4000,
       // =====================
       valid: false,
       showOverlay: false,
-      showDialog: false,
       // =====Form inputs=====
-      authors: '',
+      authors: "",
       price: 0,
-      shortDescription: '',
-      title: '',
-      thumbnailUrl: '',
+      shortDescription: "",
+      title: "",
+      thumbnailUrl: "",
       isFormSubmitted: false,
-      id: '',
+      id: "",
       // =====================
       // ==Validation rules===
       textRules: [
-        (v) => !!v || 'This is a required field',
-        (v) => v.length <= 50 || 'Max 25 characters',
+        (v) => !!v || "This is a required field",
+        (v) => v.length <= 50 || "Max 25 characters",
       ],
       descriptionRules: [
-        (v) => !!v || 'This is a required field',
-        (v) => v.length <= 500 || 'Max 500 characters',
+        (v) => !!v || "This is a required field",
+        (v) => v.length <= 500 || "Max 500 characters",
       ],
       numRules: [
-        (v) => !isNaN(v) || 'Please enter a valid integer',
-        (v) => v !== '' || 'Please enter a valid integer',
+        (v) => !isNaN(v) || "Please enter a valid integer",
+        (v) => v !== "" || "Please enter a valid integer",
       ],
     };
+  },
+  computed: {
+    // ...mapGetters("moduleSnackbar", { snackbarFromStore: "getSnackbar" }),
+    snackbarFromStore: {
+      get() {
+        return this.$store.state.moduleSnackbar.snackbar;
+      },
+      set(value) {
+        this.$store.dispatch("moduleSnackbar/setSnackbar", value);
+      },
+    },
+    ...mapGetters("moduleSnackbar", {
+      getSnackbarContent: "getSnackbarContent",
+    }), // snackbarContent: {
+    //   get() {
+    //     return this.$store.state.moduleSnackbar.snackbarContent;
+    //   },
+    //   set(value) {
+    //     this.$store.dispatch("moduleSnackbar/setSnackbarContent", value);
+    //   },
+    // },
   },
   methods: {
     // ...mapActions("moduleCreateBook", ["verifyUrl"]),
@@ -153,20 +199,52 @@ export default {
     //   this.verifyUrl(v);
     //   return this.isUrlValid;
     // },
-    ...mapActions('moduleUpdateBook', {
-      updateBook: 'updateBook',
+    ...mapActions("moduleUpdateBook", {
+      updateBook: "updateBook",
     }),
-    openDialog() {
-      this.showDialog = true;
+    ...mapActions("moduleAllBooks", {
+      deleteBook: "deleteBook",
+    }),
+    ...mapActions("moduleSnackbar", {
+      setSnackbarContent: "setSnackbarContent",
+    }),
+    // ...mapActions("moduleSnackbar", {
+    //   setSnackbar: "setSnackbar",
+    // }),
+    handleBookDeletion() {
+      console.log(`this.id is:`);
+      console.log(this.id);
+      this.deleteBook(this.id);
+      this.closeDialog("delete");
+
+      // Trigger the snackbar
+      // Set the snackbar content
+      this.setSnackbarContent(`"${this.title}" was deleted`);
+      // Trigger the snackbar
+      // this.snackbar = true;
     },
-    closeDialog() {
-      // Trigger the reset form method in the HOC
-      this.$refs.multiStepForm.resetForm();
-      // toggle isFormSubmitted so that when the card is opened next, it will display the cancel/submit instead of the post-submit btn
-      this.isFormSubmitted = false;
-      // Close the dialog
-      this.showDialog = false;
+
+    openDialog(selectedDialog) {
+      if (selectedDialog === "edit") {
+        this.showEditDialog = true;
+      } else if (selectedDialog === "delete") {
+        this.showDeleteDialog = true;
+      }
     },
+
+    closeDialog(selectedDialog) {
+      if (selectedDialog === "edit") {
+        // Trigger the reset form method in the HOC
+        this.$refs.multiStepForm.resetForm();
+        // toggle isFormSubmitted so that when the card is opened next, it will display the cancel/submit instead of the post-submit btn
+        this.isFormSubmitted = false;
+        // Close the dialog
+        this.showEditDialog = false;
+      } else if (selectedDialog === "delete") {
+        this.showDeleteDialog = false;
+      }
+    },
+
     validate() {
       this.$refs.form.validate();
       this.createPreview();
@@ -187,12 +265,14 @@ export default {
       // Check if authors is an array, else convert from a string to an array of strings
       let authorsArray = this.authors;
       if (!Array.isArray(authorsArray)) {
-        authorsArray = authorsArray.split(',');
+        authorsArray = authorsArray.split(",");
       }
 
+      // Set the snackbar content tha will fire if the DB query is successful
+      this.setSnackbarContent("Book has been modified");
       // Switch the state to show the form has been subitted
       this.isFormSubmitted = true;
-
+      // execute the updateBook method from the store
       this.updateBook({
         title: this.title,
         thumbnailUrl: this.thumbnailUrl,
@@ -201,23 +281,20 @@ export default {
         shortDescription: this.shortDescription,
         id: this.id,
       });
-      this.snackbar = true;
     },
     resetFormFields() {
       this.isFormSubmitted = false;
-      this.title = '';
-      this.thumbnailUrl = '';
-      this.authors = '';
+      this.title = "";
+      this.thumbnailUrl = "";
+      this.authors = "";
       this.price = null;
-      this.shortDescription = '';
+      this.shortDescription = "";
     },
     closeSnackBar() {
-      this.snackbar = false;
+      console.log("trying to close snackbar:");
+      this.snackbarFromStore = false;
     },
   },
-  // computed: {
-  //   ...mapGetters("moduleCreateBook", { isUrlValid: "getSearchResults" }),
-  // },
 };
 </script>
 
