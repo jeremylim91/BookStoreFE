@@ -18,6 +18,9 @@ export default {
       axios
         .put('/books/updateBook', payload)
         .then(({ data }) => {
+          // trigger the snackbar
+            commit("moduleSnackbar/triggerSnackbar", data, {root:true})
+
           // commit to getAllBooks data so that the data on the page is refreshed
           commit('moduleAllBooks/getAllBooksData', data, { root: true });
         })

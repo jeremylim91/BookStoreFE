@@ -14,19 +14,14 @@ export default {
       state.count++
     },
     getAllBooksData(state, data){
-      console.log("data in mutations is:")
-      console.log(data)
+   
       // Update the state with the data provided
       state.allBooksData= [...data];
     
     }
   },
   actions: {
-    incrementIfOddOnRootSum ({ state, commit, rootState }) {
-      if ((state.count + rootState.count) % 2 === 1) {
-        commit('increment')
-      }
-    },
+    
     getAllBooksData({ state, commit, rootState }, payload){
       // query the BE for the data
       axios.get("/books/findAll")
@@ -41,16 +36,23 @@ export default {
         console.log(`error is:`)
         console.log(error)
       })
-      
+    },
+    deleteBook({state, commit, rootstate}, payload){
+      console.log('payload is:')
+      console.log(payload)
+      axios.delete(`/books/deleteBook?bookId=${payload}`)
+      .then(({data})=>{
+        console.log("data from deleting book")
+        console.log(data)
+
+        commit("moduleSnackbar/triggerSnackbar", data, {root:true})
+        
+        commit("getAllBooksData", data)
+      })
+      .catch(error=> console.log(error))
     }
   },
   getters: {
-    doubleCount (state) {
-      return state.count * 2
-    },
-    sumWithRootCount (state, getters, rootState) {
-      return state.count + rootState.count
-    },
     getAllBooksData(state, getters, rootState){
       return state.allBooksData;
     }

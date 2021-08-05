@@ -54,7 +54,10 @@ export default {
       axios
         .post('/books/insert', payload)
         .then(({ data }) => {
-          commit('toggleIsBookAdded');
+          
+          // Trigger the snackbar
+          commit("moduleSnackbar/triggerSnackbar", data, {root:true})
+          // commit('toggleIsBookAdded');
           commit(CREATE_BOOK, data);
         })
         .catch((error) => {
