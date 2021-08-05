@@ -194,8 +194,8 @@
       </template>
     </MultiStepForm>
     <!-- eslint-disable-next-line -->
-    <v-snackbar v-model="snackbar" :timeout="timeout">
-      {{ title }} was successfully added to your store
+    <v-snackbar v-model="snackbarFromStore" :timeout="timeout">
+      {{ getSnackbarContent }}
       <template v-slot:action="{ attrs }">
         <!-- eslint-disable-next-line -->
         <v-btn color="blue" text v-bind="attrs" @click="closeSnackBar">
@@ -207,10 +207,10 @@
 </template>
 
 <script>
-import PageHeader from '../HOCs/PageHeader.vue';
+import PageHeader from "../HOCs/PageHeader.vue";
 // import Card from '../HOCs/Card.vue';
-import { mapActions, mapGetters } from 'vuex';
-import MultiStepForm from '../HOCs/MultiStepForm.vue';
+import { mapActions, mapGetters } from "vuex";
+import MultiStepForm from "../HOCs/MultiStepForm.vue";
 
 export default {
   components: {
@@ -221,7 +221,6 @@ export default {
   data() {
     return {
       // ====Snack bar=====
-      snackbar: false,
       timeout: 5000,
       // =====================
       // ===multistep form====
@@ -229,24 +228,24 @@ export default {
       // valid: false,
       // =====================
       // =====Form inputs=====
-      authors: '',
+      authors: "",
       price: 0,
-      shortDescription: '',
-      title: '',
-      thumbnailUrl: '',
+      shortDescription: "",
+      title: "",
+      thumbnailUrl: "",
       // =====================
       // ==Validation rules===
       textRules: [
-        (v) => !!v || 'This is a required field',
-        (v) => v.length <= 50 || 'Max 25 characters',
+        (v) => !!v || "This is a required field",
+        (v) => v.length <= 50 || "Max 25 characters",
       ],
       descriptionRules: [
-        (v) => !!v || 'This is a required field',
-        (v) => v.length <= 500 || 'Max 500 characters',
+        (v) => !!v || "This is a required field",
+        (v) => v.length <= 500 || "Max 500 characters",
       ],
       numRules: [
-        (v) => !isNaN(v) || 'Please enter a valid integer',
-        (v) => v !== '' || 'Please enter a valid integer',
+        (v) => !isNaN(v) || "Please enter a valid integer",
+        (v) => v !== "" || "Please enter a valid integer",
       ],
       // urlRules: [(v) => this.checkUrl(v) || "URL invalid"],
       // ======================
@@ -256,30 +255,48 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('moduleCreateBook', { isBookAdded: 'getIsBookAdded' }),
+    ...mapGetters("moduleCreateBook", { isBookAdded: "getIsBookAdded" }),
+    ...mapGetters("moduleSnackbar", {
+      getSnackbarContent: "getSnackbarContent",
+    }),
+    snackbarFromStore: {
+      get() {
+        return this.$store.state.moduleSnackbar.snackbar;
+      },
+      set(value) {
+        this.$store.dispatch("moduleSnackbar/setSnackbar", value);
+      },
+    },
     // snackbar() {
     //   return this.isBookAdded;
     // },
   },
   methods: {
-    ...mapActions('moduleCreateBook', {
-      createBook: 'createBook',
-      // toggleSnackBar: 'toggleIsBookAdded',
+    ...mapActions("moduleCreateBook", {
+      createBook: "createBook",
+    }),
+    ...mapActions("moduleSnackbar", {
+      setSnackbarContent: "setSnackbarContent",
     }),
 
     validate() {
-      console.log('Validating the input....');
+      console.log("Validating the input....");
       this.$refs.form.validate();
     },
 
     prepDataAndSubmit() {
       // Convert authors from a string to an array of strings
-      const authorsArray = this.authors.split(',');
-      console.log('authorsArray is:');
+      const authorsArray = this.authors.split(",");
+      console.log("authorsArray is:");
       console.log(authorsArray);
 
       // Switch the state to show the form has been subitted
       this.isFormSubmitted = true;
+
+      // Set the message that will be displayed in the snackbar
+      this.setSnackbarContent(
+        `${this.title} was successfully added to your store`
+      );
 
       this.createBook({
         title: this.title,
@@ -291,11 +308,11 @@ export default {
     },
     resetFormFields() {
       this.isFormSubmitted = false;
-      this.title = '';
-      this.thumbnailUrl = '';
-      this.authors = '';
+      this.title = "";
+      this.thumbnailUrl = "";
+      this.authors = "";
       this.price = null;
-      this.shortDescription = '';
+      this.shortDescription = "";
 
       // // Reset form fields
       // this.$refs.form.reset();
