@@ -1,25 +1,26 @@
 <template>
   <v-app id="inspire">
-    <v-app-bar prominent flat dense app v-if="$vuetify.breakpoint.smAndDown">
+    <!-- hamburger bar -->
+    <v-app-bar prominent flat dense app v-if="$vuetify.breakpoint.mdAndDown">
       <v-app-bar-nav-icon
         v-model="drawer"
+        v-click-outside="() => (drawer = false)"
         @click="drawer = true"
-        v-click-outside="() => (drawer = null)"
       ></v-app-bar-nav-icon>
       <v-toolbar-title>Bookstore</v-toolbar-title>
     </v-app-bar>
     <!-- <v-app-bar-nav-icon
       app
-      v-if="$vuetify.breakpoint.smAndDown"
+      v-if="$vuetify.breakpoint.mdAndDown"
       v-model="drawer"
       @click="drawer = true"
       v-click-outside="() => (drawer = !drawer)"
     ></v-app-bar-nav-icon> -->
     <v-navigation-drawer
       app
-      :value="toggleValue($vuetify.breakpoint.smAndDown)"
+      :value="toggleValue($vuetify.breakpoint.mdAndDown)"
       dark
-      :expand-on-hover="!$vuetify.breakpoint.smAndDown"
+      :expand-on-hover="!$vuetify.breakpoint.mdAndDown"
       style="background-color: #374A67"
     >
       <v-list>
@@ -74,17 +75,26 @@ export default {
     right: null,
   }),
   methods: {
-    toggleValue(isSmAndDown) {
-      console.log(`isSmAndDown:`);
-      console.log(isSmAndDown);
-      if (isSmAndDown && this.drawer === false) {
+    toggleValue(ismdAndDown) {
+      console.log(`ismdAndDown:`);
+      console.log(ismdAndDown);
+      // Handle scenario where screen is small and drawer is closed
+      if (ismdAndDown && this.drawer === false) {
         this.drawer = null;
       }
-      if (isSmAndDown && this.drawer !== false) {
+      // if screen is small and drawer is neither true nor null
+      if (ismdAndDown && this.drawer !== false) {
         return this.drawer;
+        // return true;
       }
+      // if screen is large, or is small but true, or is small
       return true;
     },
   },
 };
 </script>
+<style>
+.v-navigation-drawer {
+  height: 100% !important;
+}
+</style>
