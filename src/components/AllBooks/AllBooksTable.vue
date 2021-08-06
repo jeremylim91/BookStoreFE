@@ -7,6 +7,7 @@
     class="elevation-1"
     :loading="isLoading"
   >
+    <!-- eslint-disable-next-line -->
     <template v-slot:item.thumbnailUrl="{ item }">
       <!-- if the thumnail field is empty, show NA -->
       <div v-if="urlIsInvalid(item)">
