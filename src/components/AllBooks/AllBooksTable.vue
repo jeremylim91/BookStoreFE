@@ -27,7 +27,6 @@
     <template v-slot:item.actions="{ item }">
       <!-- if the thumnail field is empty, show NA -->
       <div class="actions-container">
-        <!-- <EditBtn :handle-btn-click="handleEditBtnClick($event, item)" /> -->
         <v-btn
           class="mx-auto my-3"
           block
@@ -56,7 +55,6 @@
 </template>
 
 <script>
-// import EditBtn from '../HOCs/EditBtn.vue';
 import { mapGetters, mapActions } from "vuex";
 export default {
   props: ["openDialog", "updateSelectedBook", "closeDialog", "isLoading"],

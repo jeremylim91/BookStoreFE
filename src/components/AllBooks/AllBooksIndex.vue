@@ -12,12 +12,9 @@
       :openDialog="openDialog"
       :updateSelectedBook="updateSelectedBook"
       :closeDialog="closeDialog"
+      :isLoading="isLoading"
     />
-    <!-- <v-layout row justify-center> -->
     <v-dialog v-model="showEditDialog" persistent max-width="70%">
-      <template v-slot:activator="{ on }">
-        <!-- <v-btn color="primary" dark v-on="on">Open Dialog</v-btn> -->
-      </template>
       <MultiStepForm
         ref="multiStepForm"
         :is-form-submitted="isFormSubmitted"
@@ -86,16 +83,7 @@
         </template>
       </MultiStepForm>
     </v-dialog>
-    <v-snackbar v-model="snackbarFromStore" :timeout="timeout">
-      {{ getSnackbarContent }}
-      <template v-slot:action="{ attrs }">
-        <!-- eslint-disable-next-line -->
-        <v-btn color="blue" text v-bind="attrs" @click="closeSnackBar">
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar>
-    <!-- </v-layout> -->
+    <Snackbar />
 
     <v-dialog v-model="showDeleteDialog" max-width="70%">
       <template v-slot:activator="{ on }"> </template>
@@ -118,7 +106,6 @@
       </v-card>
     </v-dialog>
   </div>
-  <!-- <v-overlay :value="overlay"></v-overlay> -->
 </template>
 
 <script>
@@ -126,27 +113,23 @@ import PageHeader from "../HOCs/PageHeader.vue";
 import AllBooksTable from "./AllBooksTable.vue";
 import MultiStepForm from "../HOCs/MultiStepForm.vue";
 import { mapActions, mapGetters } from "vuex";
+import Snackbar from "../HOCs/Snackbar.vue";
 
-// import Card from "../HOCs/Card.vue";
 export default {
   components: {
     PageHeader,
     AllBooksTable,
     MultiStepForm,
+    Snackbar,
   },
   data() {
     return {
+      // ====Table=====
+      isLoading: false,
       // ====Dialogs=====
       showDeleteDialog: false,
       showEditDialog: false,
 
-      // ====Snack bar=====
-      snackbar: false,
-      // snackbarContent: "",
-      timeout: 4000,
-      // =====================
-      valid: false,
-      showOverlay: false,
       // =====Form inputs=====
       authors: "",
       price: 0,
@@ -157,6 +140,7 @@ export default {
       id: "",
       // =====================
       // ==Validation rules===
+      valid: false,
       textRules: [
         (v) => !!v || "This is a required field",
         (v) => v.length <= 50 || "Max 25 characters",
@@ -183,18 +167,10 @@ export default {
     },
     ...mapGetters("moduleSnackbar", {
       getSnackbarContent: "getSnackbarContent",
-    }), // snackbarContent: {
-    //   get() {
-    //     return this.$store.state.moduleSnackbar.snackbarContent;
-    //   },
-    //   set(value) {
-    //     this.$store.dispatch("moduleSnackbar/setSnackbarContent", value);
-    //   },
-    // },
+    }),
   },
   methods: {
-    // ...mapActions("moduleCreateBook", ["verifyUrl"]),
-
+    // Currently not working; intent was to check if book url is valid, else show "img not found" on card
     // checkUrl(v) {
     //   this.verifyUrl(v);
     //   return this.isUrlValid;
@@ -208,9 +184,7 @@ export default {
     ...mapActions("moduleSnackbar", {
       setSnackbarContent: "setSnackbarContent",
     }),
-    // ...mapActions("moduleSnackbar", {
-    //   setSnackbar: "setSnackbar",
-    // }),
+
     handleBookDeletion() {
       console.log(`this.id is:`);
       console.log(this.id);
@@ -223,7 +197,9 @@ export default {
       // Trigger the snackbar
       // this.snackbar = true;
     },
-
+    /**
+     * @param {String} selectedDialog should signal whether the user is intending to trigger the dialog for the "edit" button or the "delete" button
+     */
     openDialog(selectedDialog) {
       if (selectedDialog === "edit") {
         this.showEditDialog = true;
@@ -232,6 +208,9 @@ export default {
       }
     },
 
+    /**
+     * @param {String} selectedDialog should signal whether the user is intending to close the dialog for the "edit" button or the "delete" button
+     */
     closeDialog(selectedDialog) {
       if (selectedDialog === "edit") {
         // Trigger the reset form method in the HOC
@@ -245,12 +224,8 @@ export default {
       }
     },
 
-    validate() {
-      this.$refs.form.validate();
-      this.createPreview();
-    },
     // validateFormInput() {
-    //   console.log(this.$refs.form.valdiate());
+    //   this.$refs.form.valdiate();
     //   this.createPreview();
     // },
     updateSelectedBook(selectedBook) {
@@ -295,20 +270,20 @@ export default {
       this.snackbarFromStore = false;
     },
   },
+  mounted() {
+    this.isLoading = true;
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 1000);
+  },
 };
 </script>
 
 <style>
 .test-header {
-  /* position: absolute; */
   position: sticky;
   top: 0;
   z-index: 1;
   width: 100%;
-}
-@media only screen and (max-width: 960px) {
-  .test-header {
-    display: none;
-  }
 }
 </style>
