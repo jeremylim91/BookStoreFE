@@ -8,13 +8,25 @@
         Find books by title or content
       </template>
     </PageHeader>
-    <SearchBar />
+    <SearchBar :showLoader="showLoader" />
     <v-divider />
     <v-container>
       <v-row>
-        <!-- :cols="book < 1 ? 12 : 3" -->
-
+        <v-col v-if="loader">
+          <center>
+            <v-progress-circular
+              indeterminate
+              color="primary"
+            ></v-progress-circular>
+          </center>
+        </v-col>
+        <v-col v-else-if="searchResults.length < 1">
+          <center>
+            {{ searchStatus }}
+          </center>
+        </v-col>
         <v-col
+          v-else
           v-for="book in searchResults"
           :key="book.id"
           cols="12"
@@ -63,10 +75,25 @@ export default {
     Card,
   },
   data() {
-    return {};
+    return {
+      loader: false,
+    };
   },
   computed: {
     ...mapGetters("moduleSearch", { searchResults: "getSearchResults" }),
+    ...mapGetters("moduleSearch", { searchStatus: "getSearchStatus" }),
+  },
+  methods: {
+    showLoader() {
+      setTimeout(() => {
+        this.loader = false;
+      }, 1000);
+      this.loader = true;
+    },
+    thereAreResults() {
+      if (this.searchResults.length === 0) return true;
+      return false;
+    },
   },
 };
 </script>

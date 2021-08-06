@@ -3,16 +3,17 @@
     <v-container>
       <!-- eslint-disable-next-line -->
       <v-form
+        ref="form"
         v-model="valid"
         class="form"
-        @submit.prevent="getSearchResults(searchString)"
+        @submit.prevent="submitForm"
       >
         <v-row>
           <!-- eslint-disable-next-line -->
 
           <v-col cols="12" md="10">
             <v-text-field
-              v-model="searchString"
+              v-model.trim="searchString"
               :rules="nameRules"
               label="Search for a book"
               required
@@ -33,6 +34,7 @@
 import { mapActions } from "vuex";
 import { GET_SEARCH_RESULTS } from "../../store/moduleSearch";
 export default {
+  props: ["showLoader"],
   data: () => ({
     valid: false,
     searchString: "",
@@ -40,6 +42,15 @@ export default {
   }),
   methods: {
     ...mapActions("moduleSearch", { getSearchResults: GET_SEARCH_RESULTS }),
+
+    submitForm() {
+      // check if form is valid
+      this.valid = this.$refs.form.validate();
+      if (this.valid) {
+        this.showLoader();
+        this.getSearchResults(this.searchString);
+      }
+    },
   },
 };
 </script>
