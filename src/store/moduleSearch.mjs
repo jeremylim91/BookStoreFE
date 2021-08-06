@@ -6,9 +6,12 @@ export default {
   namespaced:true,
   state: () => ({
     searchResults: [],
+    searchStatus:""
   }),
   mutations: {
     getSearchResults(state, data){
+
+      if (data.length<1) state.searchStatus="No entries found"
       console.log("data in mutations is:")
       console.log(data)
       // Update the state with the data provided
@@ -20,6 +23,8 @@ export default {
     getSearchResults({ state, commit, rootState },  payload){
       console.log("payload is:")
       console.log(payload)
+
+      // handle what to pass to server
 
       // query the BE for the data
       axios.get(`/books/findByText?text=${payload}`)
@@ -38,9 +43,10 @@ export default {
   },
   getters: {
     getSearchResults(state, getters, rootState){
-      console.log("inside getter")
-      console.log(state.searchResults)
       return state.searchResults;
+    },
+    getSearchStatus(state, getters, rootState){
+      return state.searchStatus;
     }
   }
 }
