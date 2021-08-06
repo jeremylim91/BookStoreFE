@@ -5,6 +5,7 @@
     :items="allBooks"
     :items-per-page="5"
     class="elevation-1"
+    :loading="isLoading"
   >
     <template v-slot:item.thumbnailUrl="{ item }">
       <!-- if the thumnail field is empty, show NA -->
@@ -16,6 +17,13 @@
         <v-img :src="item.thumbnailUrl" class="book-thumbnail" />
       </div>
     </template>
+    <!-- eslint-disable-next-line -->
+    <template v-slot:item.authors="{ item }">
+      <div>
+        {{ getAuthorsAsString(item) }}
+      </div>
+    </template>
+    <!-- eslint-disable-next-line -->
     <template v-slot:item.actions="{ item }">
       <!-- if the thumnail field is empty, show NA -->
       <div class="actions-container">
@@ -51,7 +59,7 @@
 // import EditBtn from '../HOCs/EditBtn.vue';
 import { mapGetters, mapActions } from "vuex";
 export default {
-  props: ["openDialog", "updateSelectedBook", "closeDialog"],
+  props: ["openDialog", "updateSelectedBook", "closeDialog", "isLoading"],
   data() {
     return {
       index: 0,
@@ -60,7 +68,7 @@ export default {
         { text: "Price (SGD)", value: "price" },
         { text: "Page count", value: "pageCount" },
         { text: "Thumbnail", value: "thumbnailUrl" },
-        { text: "Authors", value: "authors" },
+        { text: "Authors", value: `authors` },
         { text: "Description", value: "shortDescription" },
         { text: "Actions", value: "actions" },
       ],
@@ -72,12 +80,35 @@ export default {
       return item.thumbnailUrl == "" || item.thumbnailUrl == null;
     },
     handleEditBtnClick(event, item) {
+      // Update the state with the details of the book selected by the user
       this.updateSelectedBook(item);
+
+      /**
+       * @argument {String} "edit" will signal to open the dialog relevant to the edit button
+       */
       this.openDialog("edit");
     },
+
     handleDeleteBtnClick(event, item) {
       this.updateSelectedBook(item);
+      /**
+       * Open the dialog to warn user about book deletion
+       * @argument {String} "delete" signals to open the dialog linked to the delete button
+       */
       this.openDialog("delete");
+    },
+    getAuthorsAsString(bookData) {
+      // Set a variable that will hold all the authors' name
+      let getAuthorsAsString = "";
+      // Loop thru the array and add each element (along with nec puctuation) to the getAuthorsAsString string
+      bookData.authors.forEach((element, idx) => {
+        if (idx === bookData.authors.length - 1) {
+          getAuthorsAsString += element;
+        } else {
+          getAuthorsAsString += `${element}, `;
+        }
+      });
+      return getAuthorsAsString;
     },
   },
   mounted() {
