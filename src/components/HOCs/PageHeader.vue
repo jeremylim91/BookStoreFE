@@ -1,5 +1,5 @@
 <template>
-  <div class="page-header">
+  <div class="page-header" v-if="!$vuetify.breakpoint.mdAndDown">
     <div class="container">
       <h1>
         <slot :class="headerContent" name="headerContent">
