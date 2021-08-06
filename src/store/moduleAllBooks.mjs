@@ -49,7 +49,10 @@ export default {
         
         commit("getAllBooksData", data)
       })
-      .catch(error=> console.log(error))
+      .catch(error=> {
+        alert("There was an error performing this task. Please refresh your page and try again")
+        console.log(error)
+      })
     }
   },
   getters: {
