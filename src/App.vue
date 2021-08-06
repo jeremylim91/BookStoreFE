@@ -7,7 +7,7 @@
         v-click-outside="() => (drawer = false)"
         @click="drawer = true"
       ></v-app-bar-nav-icon>
-      <v-toolbar-title>Bookstore</v-toolbar-title>
+      <v-toolbar-title>{{ this.$route.name }}</v-toolbar-title>
     </v-app-bar>
     <!-- <v-app-bar-nav-icon
       app
@@ -35,9 +35,9 @@
         <v-list-item link>
           <v-list-item-content>
             <v-list-item-title class="text-h6">
-              Sandra Adams
+              Jun Wen Tsang
             </v-list-item-title>
-            <v-list-item-subtitle>sandra_a88@gmail.com</v-list-item-subtitle>
+            <v-list-item-subtitle>Jun_Wen@gmail.com</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-list>
